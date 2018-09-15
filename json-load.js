@@ -15,7 +15,7 @@ function loadArticle(id){
         		$("div.article-body").append('<p>'+article.body[element].model.text+'</p>');
         	}
         	else if(article.body[element].type == "image"){
-        		$("div.article-body").append('<img src="'+article.body[element].model.url+'" height="'+article.body[element].model.height+'" width="'+article.body[element].model.width+'" alt="'+article.body[element].model.altText+'"/>');
+        		$("div.article-body").append('<img class="img-fluid mx-auto d-block shadow-sm p-2 mb-3" src="'+article.body[element].model.url+'" max-height="'+article.body[element].model.height+'" max-width="'+article.body[element].model.width+'" alt="'+article.body[element].model.altText+'"/>');
         	}
         	else if(article.body[element].type == "list"){
         		var listTag = "ol>";
