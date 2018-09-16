@@ -51,10 +51,8 @@ img {
 
 button {
 	border: none;
-	background-color: #17a2b8;
-	color: white;
 	padding: 15px 15px;
-	margin: 0 0.5rem;
+	margin: 0.5rem;
 	text-align: center;
 	text-decoration: none;
 	display: inline-block;
@@ -63,9 +61,6 @@ button {
 }
 
 button:hover {
-	background-color: DimGray;
-	-webkit-transition-duration: 0.4s; /* Safari */
-	transition-duration: 0.4s;
 	cursor: pointer;
 }
 
@@ -83,7 +78,7 @@ button:hover {
 	line-height: 1.2;
 }
 
-.article {
+.content {
 	max-width: 1000px;
 	padding: 0 15px;
 	margin-right: auto;
@@ -96,7 +91,17 @@ button:hover {
 	margin-right: auto;
 	margin-left: auto;
 	padding: 1rem;
-	margin-bottom: 10px;
+}
+
+.nav-buttons button {
+	background-color: #17a2b8;
+	color: white;
+}
+
+.nav-buttons button:hover {
+	background-color: DimGray;
+	-webkit-transition-duration: 0.4s; /* Safari */
+	transition-duration: 0.4s;
 }
 
 #next {
@@ -114,4 +119,24 @@ button:hover {
 
 #rate:hover {
 	background-color: DimGray;
+}
+
+.rateUp {
+	background-color: green;
+	color: white;
+}
+
+.rateDown {
+	background-color: FireBrick;
+	color: white;
+}
+
+.articleRateBox {
+	font-size: 22px;
+	margin: 2rem 0;
+}
+
+.pull-right {
+	float: right;
+	margin-top: -1rem;
 }
