@@ -12,8 +12,10 @@ function loadArticle(id){
 
 		var h1 = document.createElement('h1');
 		h1.textContent = article.title;
-		h1.className = 'bg-primary text-white';
+		h1.className = 'border-bottom border-info p-2 mt-3';
+		h1.setAttribute('style','border-width:2px !important');
 		articleElement.appendChild(h1);
+		document.title = article.title;
 
 		var bodyDiv = document.createElement('div');
 		bodyDiv.className = 'article-body';
@@ -27,6 +29,7 @@ function loadArticle(id){
 				newElement.alt = article.body[element].model.altText;
 				newElement.height = article.body[element].model.height;
 				newElement.width = article.body[element].model.width;
+				newElement.className = 'mx-auto d-block p-2 mb-3 shadow-sm';
 			}
 			else if(elementType == 'ul'){
 				if(article.body[element].model.type == 'ordered'){
