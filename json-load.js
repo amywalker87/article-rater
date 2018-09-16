@@ -3,10 +3,28 @@ var randomIndex = Math.ceil(Math.random() * articleArray.length);
 
 var elements = {heading: 'h2', paragraph: 'p', image: 'img', list: 'ul', ordered: 'ol'}
 
-$(document).ready(loadArticle(randomIndex));
+$(document).ready(function(){
+	loadArticle(false, articleArray[0], articleArray[1]);
+});
 
-function loadArticle(id){
-	$.getJSON('api/article/get.php?id='+id, function(article){
+$(document).on('click','#next', function(){
+	var myNode = document.querySelector('.article');
+	while (myNode.firstChild) {
+		myNode.removeChild(myNode.firstChild);
+	}
+	loadArticle(articleArray[0], articleArray[1], articleArray[2]);
+})
+
+$(document).on('click','#previous', function(){
+	var myNode = document.querySelector('.article');
+	while (myNode.firstChild) {
+		myNode.removeChild(myNode.firstChild);
+	}
+	loadArticle(false, articleArray[0], articleArray[1]);
+}) 
+
+function loadArticle(previous, current, next){
+	$.getJSON('api/article/get.php?id='+current, function(article){
 		article = JSON.parse(article.message);
 		var articleElement = document.querySelector('.article');
 
@@ -44,5 +62,20 @@ function loadArticle(id){
 			}
 			bodyDiv.appendChild(newElement);
 		}
+		var buttons = document.createElement('div');
+		buttons.className = 'nav-buttons';
+		articleElement.appendChild(buttons);
+		if(previous){
+			var prevButton = document.createElement('button');
+			prevButton.textContent = 'Previous Article';
+			prevButton.id = 'previous';
+			prevButton.value = previous;
+			buttons.appendChild(prevButton);
+		}
+		var nextButton = document.createElement('button');
+		nextButton.textContent = 'Next Article';
+		nextButton.id = 'next';
+		nextButton.value = next;
+		buttons.appendChild(nextButton);
 	});
 }
