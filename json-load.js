@@ -1,6 +1,6 @@
-var articleArray = [4,5,1,3,2];
+var articleArray = [1,2,3,4,5];
 var articleTitles = [];
-var randomIndex = Math.ceil(Math.random() * articleArray.length);
+articleArray.sort(function() { return 0.5 - Math.random() });
 var currentArticle = 0;
 
 var elements = {heading: 'h2', paragraph: 'p', image: 'img', list: 'ul', ordered: 'ol'};
