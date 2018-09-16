@@ -1,26 +1,29 @@
 var articleArray = [1,2,3,4,5];
 var randomIndex = Math.ceil(Math.random() * articleArray.length);
+var currentArticle = 4;
 
 var elements = {heading: 'h2', paragraph: 'p', image: 'img', list: 'ul', ordered: 'ol'}
 
 $(document).ready(function(){
-	loadArticle(false, articleArray[0], articleArray[1]);
+	loadArticle(articleArray[currentArticle - 1], articleArray[currentArticle], articleArray[currentArticle + 1]);
 });
 
 $(document).on('click','#next', function(){
+	currentArticle++;
 	var myNode = document.querySelector('.article');
 	while (myNode.firstChild) {
 		myNode.removeChild(myNode.firstChild);
 	}
-	loadArticle(articleArray[0], articleArray[1], articleArray[2]);
+	loadArticle(articleArray[currentArticle - 1], articleArray[currentArticle], articleArray[currentArticle + 1]);
 })
 
 $(document).on('click','#previous', function(){
+	currentArticle--;
 	var myNode = document.querySelector('.article');
 	while (myNode.firstChild) {
 		myNode.removeChild(myNode.firstChild);
 	}
-	loadArticle(false, articleArray[0], articleArray[1]);
+	loadArticle(articleArray[currentArticle - 1], articleArray[currentArticle], articleArray[currentArticle + 1]);
 }) 
 
 function loadArticle(previous, current, next){
@@ -52,10 +55,10 @@ function loadArticle(previous, current, next){
 					newElement = document.createElement(elementType);
 				}
 				for (var list in article.body[element].model.items){
-    				var listItem = document.createElement('li');
-    				listItem.textContent = article.body[element].model.items[list];
-    				newElement.appendChild(listItem);
-    			}
+					var listItem = document.createElement('li');
+					listItem.textContent = article.body[element].model.items[list];
+					newElement.appendChild(listItem);
+				}
 			}
 			else{
 				newElement.textContent = article.body[element].model.text;
@@ -72,10 +75,18 @@ function loadArticle(previous, current, next){
 			prevButton.value = previous;
 			buttons.appendChild(prevButton);
 		}
-		var nextButton = document.createElement('button');
-		nextButton.textContent = 'Next Article';
-		nextButton.id = 'next';
-		nextButton.value = next;
-		buttons.appendChild(nextButton);
+		if(next){
+			var nextButton = document.createElement('button');
+			nextButton.textContent = 'Next Article';
+			nextButton.id = 'next';
+			nextButton.value = next;
+			buttons.appendChild(nextButton);
+		}
+		else {
+			var rateButton = document.createElement('button');
+			rateButton.textContent = 'Rate Articles';
+			rateButton.id = 'rate';
+			buttons.appendChild(rateButton);
+		}
 	});
 }

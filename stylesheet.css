@@ -4,14 +4,14 @@
 
 html {
 	font-family: sans-serif;
-    line-height: 1.15;
+	line-height: 1.15;
 }
 
 body {
 	font-family: Arial,sans-serif;
 	font-size: 1rem;
 	font-weight: 400;
-    line-height: 1.5;
+	line-height: 1.5;
 	margin: 0;
 }
 
@@ -52,21 +52,21 @@ img {
 button {
 	border: none;
 	background-color: #17a2b8;
-    color: white;
-    padding: 15px 15px;
-    margin: 0 0.5rem;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 16px;
-    border-radius: 2px;
+	color: white;
+	padding: 15px 15px;
+	margin: 0 0.5rem;
+	text-align: center;
+	text-decoration: none;
+	display: inline-block;
+	font-size: 16px;
+	border-radius: 2px;
 }
 
 button:hover {
 	background-color: DimGray;
 	-webkit-transition-duration: 0.4s; /* Safari */
-    transition-duration: 0.4s;
-    cursor: pointer;
+	transition-duration: 0.4s;
+	cursor: pointer;
 }
 
 .heading {
@@ -80,7 +80,7 @@ button:hover {
 	display: block;
 	font-size: 5.5rem;
 	font-weight: 300;
-    line-height: 1.2;
+	line-height: 1.2;
 }
 
 .article {
@@ -92,8 +92,26 @@ button:hover {
 }
 
 .nav-buttons {
-	max-width: 350px;
+	max-width: 330px;
 	margin-right: auto;
 	margin-left: auto;
 	padding: 1rem;
+	margin-bottom: 10px;
+}
+
+#next {
+	float: right;
+}
+
+#previous {
+	float: left;
+}
+
+#rate {
+	float: right;
+	background-color: green;
+}
+
+#rate:hover {
+	background-color: DimGray;
 }

@@ -33,12 +33,12 @@ function returnResponse($message = null, $code = 200){
 	http_response_code($code);
 	header('Content-Type: application/json');
 	$status = array(
-        200 => '200 OK',
-        500 => '500 Internal Server Error'
-    );
-    header('Status: '.$status[$code]);
-    return json_encode(array(
-        'status' => $code < 300,
-        'message' => $message
-    ));
+		200 => '200 OK',
+		500 => '500 Internal Server Error'
+	);
+	header('Status: '.$status[$code]);
+	return json_encode(array(
+		'status' => $code < 300,
+		'message' => $message
+	));
 }
