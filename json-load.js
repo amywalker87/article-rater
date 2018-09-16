@@ -1,6 +1,8 @@
 var articleArray = [1,2,3,4,5];
 var randomIndex = Math.ceil(Math.random() * articleArray.length);
 
+var elements = {heading: 'h2', paragraph: 'p', image: 'img', list: 'ul', ordered: 'ol'}
+
 $(document).ready(loadArticle(randomIndex));
 
 function loadArticle(id){
@@ -17,38 +19,30 @@ function loadArticle(id){
 		bodyDiv.className = 'article-body';
 		articleElement.appendChild(bodyDiv);
 
-        for (var element in article.body){
-        	if(article.body[element].type == 'heading'){
-        		var h2 = document.createElement('h2');
-        		h2.textContent = article.body[element].model.text;
-        		bodyDiv.appendChild(h2);
-        	}
-        	else if(article.body[element].type == 'paragraph'){
-        		var p = document.createElement('p');
-        		p.textContent = article.body[element].model.text;
-        		bodyDiv.appendChild(p);
-        	}
-        	else if(article.body[element].type == 'image'){
-        		var img = document.createElement('img');
-        		img.className = 'img-fluid mx-auto d-block shadow-sm p-2 mb-3';
-        		img.src = article.body[element].model.url;
-        		img.alt = article.body[element].model.altText;
-        		img.height = article.body[element].model.height;
-        		img.width = article.body[element].model.width;
-        		bodyDiv.appendChild(img);
-        	}
-        	else if(article.body[element].type == 'list'){
-        		var li = document.createElement('ol');
-        		if(article.body[element].model.type == 'unordered'){
-        			li = document.createElement('ul');
-        		}
-    			for (var list in article.body[element].model.items){
-    				var li2 = document.createElement('li');
-    				li2.textContent = article.body[element].model.items[list];
-    				li.appendChild(li2);
+		for (var element in article.body){
+			var elementType = elements[article.body[element].type];
+			var newElement = document.createElement(elementType);
+			if(elementType == 'img'){
+				newElement.src = article.body[element].model.url;
+				newElement.alt = article.body[element].model.altText;
+				newElement.height = article.body[element].model.height;
+				newElement.width = article.body[element].model.width;
+			}
+			else if(elementType == 'ul'){
+				if(article.body[element].model.type == 'ordered'){
+					elementType = elements[article.body[element].model.type];
+					newElement = document.createElement(elementType);
+				}
+				for (var list in article.body[element].model.items){
+    				var listItem = document.createElement('li');
+    				listItem.textContent = article.body[element].model.items[list];
+    				newElement.appendChild(listItem);
     			}
-    			bodyDiv.appendChild(li);
-        	}
-        }
-    });
+			}
+			else{
+				newElement.textContent = article.body[element].model.text;
+			}
+			bodyDiv.appendChild(newElement);
+		}
+	});
 }
