@@ -58,10 +58,20 @@ button {
 	display: inline-block;
 	font-size: 16px;
 	border-radius: 2px;
+	color: white;
 }
 
 button:hover {
 	cursor: pointer;
+}
+
+button:disabled {
+	background-color: gray;
+	cursor: not-allowed;
+}
+
+button:disabled:hover {
+	background-color: gray;
 }
 
 .heading {
@@ -95,7 +105,6 @@ button:hover {
 
 .nav-buttons button {
 	background-color: #17a2b8;
-	color: white;
 }
 
 .nav-buttons button:hover {
@@ -122,13 +131,24 @@ button:hover {
 }
 
 .rateUp {
-	background-color: green;
-	color: white;
+	background-color: green;	
+}
+
+.rateUp:hover {
+	background-color: DarkGreen;
+	-webkit-transition-duration: 0.4s; /* Safari */
+	transition-duration: 0.4s;
 }
 
 .rateDown {
 	background-color: FireBrick;
-	color: white;
+	float: right;
+}
+
+.rateDown:hover {
+	background-color: DarkRed;
+	-webkit-transition-duration: 0.4s; /* Safari */
+	transition-duration: 0.4s;
 }
 
 .articleRateBox {
@@ -139,4 +159,5 @@ button:hover {
 .pull-right {
 	float: right;
 	margin-top: -1rem;
+	width: 155px;
 }

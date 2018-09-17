@@ -1,9 +1,9 @@
 var articleArray = [1,2,3,4,5];
 var articleTitles = [];
-articleArray.sort(function() { return 0.5 - Math.random() });
 var currentArticle = 0;
-
 var elements = {heading: 'h2', paragraph: 'p', image: 'img', list: 'ul', ordered: 'ol'};
+
+articleArray.sort(function(){return 0.5 - Math.random()});
 
 $(document).ready(function(){
 	loadArticle(articleArray[currentArticle - 1], articleArray[currentArticle], articleArray[currentArticle + 1]);
@@ -11,27 +11,18 @@ $(document).ready(function(){
 
 $(document).on('click','#next', function(){
 	currentArticle++;
-	var myNode = document.querySelector('.content');
-	while(myNode.firstChild){
-		myNode.removeChild(myNode.firstChild);
-	}
+	clearPage(document.querySelector('.content'));
 	loadArticle(articleArray[currentArticle - 1], articleArray[currentArticle], articleArray[currentArticle + 1]);
 })
 
 $(document).on('click','#previous', function(){
 	currentArticle--;
-	var myNode = document.querySelector('.content');
-	while(myNode.firstChild){
-		myNode.removeChild(myNode.firstChild);
-	}
+	clearPage(document.querySelector('.content'));
 	loadArticle(articleArray[currentArticle - 1], articleArray[currentArticle], articleArray[currentArticle + 1]);
 })
 
 $(document).on('click','#rate', function(){
-	var myNode = document.querySelector('.content');
-	while(myNode.firstChild){
-		myNode.removeChild(myNode.firstChild);
-	}
+	clearPage(document.querySelector('.content'));
 	loadRater(articleArray);
 })
 
@@ -41,6 +32,10 @@ $(document).on('click','.rateUp', function(){
 	if(previous.length !== 0){
 		current.insertBefore(previous);
 	}
+	$('ol li:lt(1) button.rateUp').prop('disabled',true);
+	$('ol li:gt(0) button.rateUp').prop('disabled',false);
+	$('ol li:gt(3) button.rateDown').prop('disabled',true);
+	$('ol li:lt(4) button.rateDown').prop('disabled',false);
 });
 
 $(document).on('click','.rateDown', function(){
@@ -49,6 +44,31 @@ $(document).on('click','.rateDown', function(){
 	if(next.length !== 0){
 		current.insertAfter(next);
 	}
+	$('ol li:lt(1) button.rateUp').prop('disabled',true);
+	$('ol li:gt(0) button.rateUp').prop('disabled',false);
+	$('ol li:gt(3) button.rateDown').prop('disabled',true);
+	$('ol li:lt(4) button.rateDown').prop('disabled',false);
+});
+
+$(document).on('click','#submit', function(){
+	var data = {};
+	for(i = 0; i < 5; i++){
+		// This sends the data in the format { articleID: rating }
+		data[$('ol li')[i].id] = i+1;
+	}
+	$.ajax({
+		type: 'POST',
+		url: 'api/rating/post.php',
+		dataType: 'json',
+		ContentType: 'application/json',
+		data: {'data': JSON.stringify(data)},
+		success: function( message ){
+			// add success
+		},
+		error: function( message ){
+			// add error
+		}
+	})
 });
 
 function loadArticle(previous, current, next){
@@ -148,5 +168,20 @@ function loadRater(articleArray){
 		buttonDown.textContent = 'Down';
 		buttonDown.className = 'rateDown';
 		span.appendChild(buttonDown);
+	}
+	$('ol li:lt(1) button.rateUp').prop('disabled',true);
+	$('ol li:gt(3) button.rateDown').prop('disabled',true);
+	var buttons = document.createElement('div');
+	buttons.className = 'nav-buttons';
+	contentElement.appendChild(buttons);
+	var subButton = document.createElement('button');
+	subButton.textContent = 'Submit Ratings';
+	subButton.id = 'submit';
+	buttons.appendChild(subButton);
+}
+
+function clearPage(contentElement){
+	while(contentElement.firstChild){
+		contentElement.removeChild(contentElement.firstChild);
 	}
 }

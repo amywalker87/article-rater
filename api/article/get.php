@@ -1,7 +1,7 @@
 <?php
-header("Access-Control-Allow-Origin: *");
-header("Access-Control-Allow-Headers: access");
-header("Access-Control-Allow-Methods: GET");
+header('Access-Control-Allow-Origin: *');
+header('Access-Control-Allow-Headers: access');
+header('Access-Control-Allow-Methods: GET');
 
 $article = new Article();
 $article->id = isset($_GET['id']) ? $_GET['id'] : 1;
@@ -9,7 +9,7 @@ if($article->read()){
 	echo returnResponse(json_encode($article->contents));
 }
 else {
-	echo returnResponse("Error", 500);
+	echo returnResponse('Error', 500);
 }
 
 class Article{
