@@ -11,54 +11,64 @@ $(document).ready(function(){
 });
 
 function loadArticle(contentElement, previous, current, next){
-	$.getJSON('api/article/get.php?id='+current, function(article){
-		article = JSON.parse(article.message);
-		createElement(contentElement, 'h1', article.title);
-		document.title = article.title;
-		articleTitles[current] = article.title;
-		var bodyDiv = createElement(contentElement, 'div', '', void 0, 'article-body');
+	$.ajax({
+		type: 'GET', 
+		url: 'api/article/get.php?id='+current, 
+		dataType: 'json', 
+		ContentType: 'application/json', 
+		success: function(article){
+			article = JSON.parse(article.message);
+			createElement(contentElement, 'h1', article.title);
+			document.title = article.title;
+			articleTitles[current] = article.title;
+			var bodyDiv = createElement(contentElement, 'div', '', void 0, 'article-body');
 
-		for(var element in article.body){
-			var elementType = elements[article.body[element].type];
-			if(elementType == 'img'){
-				createElement(bodyDiv, elementType, void 0, void 0, void 0, article.body[element].model.url, article.body[element].model.altText, article.body[element].model.height, article.body[element].model.width);
+			for(var element in article.body){
+				var elementType = elements[article.body[element].type];
+				if(elementType == 'img'){
+					createElement(bodyDiv, elementType, void 0, void 0, void 0, article.body[element].model.url, article.body[element].model.altText, article.body[element].model.height, article.body[element].model.width);
+				}
+				else if(elementType == 'ul'){
+					if(article.body[element].model.type == 'ordered'){
+						elementType = elements[article.body[element].model.type];
+					}
+					var listElement = createElement(bodyDiv, elementType, '');
+					for(var list in article.body[element].model.items){
+						createElement(listElement, 'li', article.body[element].model.items[list]);
+					}
+				}
+				else{
+					createElement(bodyDiv, elementType, article.body[element].model.text);
+				}
 			}
-			else if(elementType == 'ul'){
-				if(article.body[element].model.type == 'ordered'){
-					elementType = elements[article.body[element].model.type];
-				}
-				var listElement = createElement(bodyDiv, elementType, '');
-				for(var list in article.body[element].model.items){
-					createElement(listElement, 'li', article.body[element].model.items[list]);
-				}
+			var buttons = createElement(contentElement, 'div', '', void 0, 'nav-buttons');
+			if(previous){
+				var previousButton = createElement(buttons, 'button', 'Previous Article', 'previous');
+				$(previousButton).bind('click', function(){
+					currentArticle--;
+					clearPage(contentElement);
+					loadArticle(contentElement, articleArray[currentArticle - 1], articleArray[currentArticle], articleArray[currentArticle + 1]);
+				});
+			}
+			if(next){
+				var nextButton = createElement(buttons, 'button', 'Next Article', 'next');
+				$(nextButton).bind('click', function(){
+					currentArticle++;
+					clearPage(contentElement);
+					loadArticle(contentElement, articleArray[currentArticle - 1], articleArray[currentArticle], articleArray[currentArticle + 1]);
+				});
 			}
 			else{
-				createElement(bodyDiv, elementType, article.body[element].model.text);
+				var rateButton = createElement(buttons, 'button', 'Rate Articles', 'rate');
+				$(rateButton).bind('click', function(){
+					clearPage(contentElement);
+					loadRater(contentElement, articleArray);
+				});
 			}
-		}
-		var buttons = createElement(contentElement, 'div', '', void 0, 'nav-buttons');
-		if(previous){
-			createElement(buttons, 'button', 'Previous Article', 'previous');
-			$('#previous').bind('click', function(){
-				currentArticle--;
-				clearPage(contentElement);
-				loadArticle(contentElement, articleArray[currentArticle - 1], articleArray[currentArticle], articleArray[currentArticle + 1]);
-			});
-		}
-		if(next){
-			createElement(buttons, 'button', 'Next Article', 'next');
-			$('#next').bind('click', function(){
-				currentArticle++;
-				clearPage(contentElement);
-				loadArticle(contentElement, articleArray[currentArticle - 1], articleArray[currentArticle], articleArray[currentArticle + 1]);
-			});
-		}
-		else{
-			createElement(buttons, 'button', 'Rate Articles', 'rate');
-			$('#rate').bind('click', function(){
-				clearPage(contentElement);
-				loadRater(contentElement, articleArray);
-			});
+		}, 
+		error: function(){
+			clearPage(contentElement);
+			errorPage(contentElement);
 		}
 	});
 }
@@ -93,9 +103,8 @@ function loadRater(contentElement, articleArray){
 		disableArrowButtons();
 	});
 	var buttons = createElement(contentElement, 'div', '', void 0, 'nav-buttons');
-	createElement(buttons, 'button', 'Submit Ratings', 'submit');
-
-	$('#submit').bind('click', function(){
+	var submit = createElement(buttons, 'button', 'Submit Ratings', 'submit');
+	$(submit).bind('click', function(){
 		var data = {};
 		for(i = 0; i < 5; i++){
 			// This sends the data in the format { articleID: rating }
@@ -107,12 +116,13 @@ function loadRater(contentElement, articleArray){
 			dataType: 'json', 
 			ContentType: 'application/json', 
 			data: {'data': JSON.stringify(data)}, 
-			success: function( message ){
-				clearPage(document.querySelector('.content'));
+			success: function(){
+				clearPage(contentElement);
 				loadSuccess(contentElement);
 			}, 
-			error: function( message ){
-				alert('There was an error submitting, please try again');
+			error: function(){
+				clearPage(contentElement);
+				errorPage(contentElement);
 			}
 		});
 	});
@@ -123,8 +133,8 @@ function loadSuccess(contentElement){
 	document.title = 'Rating submission successful';
 	createElement(contentElement, 'p', 'Thank you, your article ratings have been submitted.');
 	var buttons = createElement(contentElement, 'div', '', void 0, 'nav-buttons');
-	createElement(buttons, 'button', 'Start Again', 'start');
-	$('#start').bind('click', function(){
+	var start = createElement(buttons, 'button', 'Start Again', 'start');
+	$(start).bind('click', function(){
 		window.location.href = 'http://localhost:8000/';
 	});
 }
@@ -167,4 +177,15 @@ function disableArrowButtons(){
 	$('ol li:lt(4) button.rateDown').prop('disabled', false);
 	$('ol li:lt(1) button.rateUp').prop('disabled', true);
 	$('ol li:gt(3) button.rateDown').prop('disabled', true);
+}
+
+function errorPage(contentElement){
+	createElement(contentElement, 'h1', 'Error');
+	document.title = 'Error';
+	createElement(contentElement, 'p', 'Sorry, there was an error while trying to load your content. Please try again.');
+	var buttons = createElement(contentElement, 'div', '', void 0, 'nav-buttons');
+	var start = createElement(buttons, 'button', 'Start Again', 'start');
+	$(start).bind('click', function(){
+		window.location.href = 'http://localhost:8000/';
+	});
 }

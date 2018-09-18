@@ -3,8 +3,18 @@
 }
 
 html {
-	font-family: sans-serif;
-	line-height: 1.15;
+	font-size: 16px;
+}
+
+@media (max-width: 1000px) {
+  html { font-size: 15px; }
+}
+
+@media (max-width: 800px) {
+  html { font-size: 14px; }
+}
+@media (max-width: 400px) {
+  html { font-size: 12px; }
 }
 
 body {
@@ -51,12 +61,12 @@ img {
 
 button {
 	border: none;
-	padding: 15px 15px;
+	padding: 1rem;
 	margin: 0.5rem;
 	text-align: center;
 	text-decoration: none;
 	display: inline-block;
-	font-size: 16px;
+	font-size: 1rem;
 	border-radius: 2px;
 	color: white;
 }
@@ -84,45 +94,38 @@ button:disabled:hover {
 	margin-left: auto;
 	display: block;
 	font-size: 5.5rem;
-	font-weight: 300;
 	line-height: 1.2;
 }
 
 .content {
 	max-width: 1000px;
-	padding: 0 15px;
+	padding: 0 1rem;
 	margin-right: auto;
 	margin-left: auto;
-	line-height: 1.5;
+	margin-bottom: 1.5rem;
 }
 
 .nav-buttons {
-	max-width: 330px;
+	max-width: 21rem;
+	height: 4rem;
 	margin-right: auto;
 	margin-left: auto;
-	padding: 1rem;
+	text-align: center;
 }
 
 .nav-buttons button {
 	background-color: #17a2b8;
+	width: 9.25rem;
+	display: inline-block;
 }
 
 .nav-buttons button:hover {
 	background-color: DimGray;
-	-webkit-transition-duration: 0.4s; /* Safari */
+	-webkit-transition-duration: 0.4s;
 	transition-duration: 0.4s;
 }
 
-#next {
-	float: right;
-}
-
-#previous {
-	float: left;
-}
-
 #rate {
-	float: right;
 	background-color: green;
 }
 
@@ -152,12 +155,12 @@ button:disabled:hover {
 }
 
 .articleRateBox {
-	font-size: 22px;
+	font-size: 1.4rem;
 	margin: 2rem 0;
 }
 
 .pull-right {
 	float: right;
 	margin-top: -1rem;
-	width: 155px;
+	width: 10rem;
 }
