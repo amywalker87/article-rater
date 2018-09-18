@@ -6,85 +6,19 @@ var elements = {heading: 'h2', paragraph: 'p', image: 'img', list: 'ul', ordered
 articleArray.sort(function(){return 0.5 - Math.random()});
 
 $(document).ready(function(){
-	loadArticle(articleArray[currentArticle - 1], articleArray[currentArticle], articleArray[currentArticle + 1]);
+	var contentElement = document.querySelector('.content');
+	loadArticle(contentElement,articleArray[currentArticle - 1], articleArray[currentArticle], articleArray[currentArticle + 1]);
 });
 
-$(document).on('click','#next', function(){
-	currentArticle++;
-	clearPage(document.querySelector('.content'));
-	loadArticle(articleArray[currentArticle - 1], articleArray[currentArticle], articleArray[currentArticle + 1]);
-})
-
-$(document).on('click','#previous', function(){
-	currentArticle--;
-	clearPage(document.querySelector('.content'));
-	loadArticle(articleArray[currentArticle - 1], articleArray[currentArticle], articleArray[currentArticle + 1]);
-})
-
-$(document).on('click','#rate', function(){
-	clearPage(document.querySelector('.content'));
-	loadRater(articleArray);
-})
-
-$(document).on('click','.rateUp', function(){
-	var current = $(this).closest('li')
-	var previous = current.prev('li');
-	if(previous.length !== 0){
-		current.insertBefore(previous);
-	}
-	$('ol li:lt(1) button.rateUp').prop('disabled',true);
-	$('ol li:gt(0) button.rateUp').prop('disabled',false);
-	$('ol li:gt(3) button.rateDown').prop('disabled',true);
-	$('ol li:lt(4) button.rateDown').prop('disabled',false);
-});
-
-$(document).on('click','.rateDown', function(){
-	var current = $(this).closest('li')
-	var next = current.next('li');
-	if(next.length !== 0){
-		current.insertAfter(next);
-	}
-	$('ol li:lt(1) button.rateUp').prop('disabled',true);
-	$('ol li:gt(0) button.rateUp').prop('disabled',false);
-	$('ol li:gt(3) button.rateDown').prop('disabled',true);
-	$('ol li:lt(4) button.rateDown').prop('disabled',false);
-});
-
-$(document).on('click','#submit', function(){
-	var data = {};
-	for(i = 0; i < 5; i++){
-		// This sends the data in the format { articleID: rating }
-		data[$('ol li')[i].id] = i+1;
-	}
-	$.ajax({
-		type: 'POST',
-		url: 'api/rating/post.php',
-		dataType: 'json',
-		ContentType: 'application/json',
-		data: {'data': JSON.stringify(data)},
-		success: function( message ){
-			// add success
-		},
-		error: function( message ){
-			// add error
-		}
-	})
-});
-
-function loadArticle(previous, current, next){
+function loadArticle(contentElement,previous, current, next){
 	$.getJSON('api/article/get.php?id='+current, function(article){
 		article = JSON.parse(article.message);
-		var contentElement = document.querySelector('.content');
 
-		var h1 = document.createElement('h1');
-		h1.textContent = article.title;
-		contentElement.appendChild(h1);
+		createElement(contentElement,'h1',article.title);
 		document.title = article.title;
 		articleTitles[current] = article.title;
 
-		var bodyDiv = document.createElement('div');
-		bodyDiv.className = 'article-body';
-		contentElement.appendChild(bodyDiv);
+		var bodyDiv = createElement(contentElement,'div','',void 0,'article-body');
 
 		for(var element in article.body){
 			var elementType = elements[article.body[element].type];
@@ -111,43 +45,38 @@ function loadArticle(previous, current, next){
 			}
 			bodyDiv.appendChild(newElement);
 		}
-		var buttons = document.createElement('div');
-		buttons.className = 'nav-buttons';
-		contentElement.appendChild(buttons);
+		var buttons = createElement(contentElement,'div','',void 0,'nav-buttons');
 		if(previous){
-			var prevButton = document.createElement('button');
-			prevButton.textContent = 'Previous Article';
-			prevButton.id = 'previous';
-			prevButton.value = previous;
-			buttons.appendChild(prevButton);
+			createElement(buttons,'button','Previous Article','previous');
+			$('#previous').bind('click',function(){
+				currentArticle--;
+				clearPage(contentElement);
+				loadArticle(contentElement,articleArray[currentArticle - 1], articleArray[currentArticle], articleArray[currentArticle + 1]);
+			});
 		}
 		if(next){
-			var nextButton = document.createElement('button');
-			nextButton.textContent = 'Next Article';
-			nextButton.id = 'next';
-			nextButton.value = next;
-			buttons.appendChild(nextButton);
+			createElement(buttons,'button','Next Article','next');
+			$('#next').bind('click',function(){
+				currentArticle++;
+				clearPage(contentElement);
+				loadArticle(contentElement,articleArray[currentArticle - 1], articleArray[currentArticle], articleArray[currentArticle + 1]);
+			});
 		}
 		else{
-			var rateButton = document.createElement('button');
-			rateButton.textContent = 'Rate Articles';
-			rateButton.id = 'rate';
-			buttons.appendChild(rateButton);
+			createElement(buttons,'button','Rate Articles','rate');
+			$('#rate').bind('click',function(){
+				clearPage(contentElement);
+				loadRater(contentElement,articleArray);
+			});
 		}
 	});
 }
 
-function loadRater(articleArray){
-	var contentElement = document.querySelector('.content');
+function loadRater(contentElement,articleArray){
+	createElement(contentElement,'h1','Rate the articles');
+	document.title = 'Rate the articles';
 
-	var h1 = document.createElement('h1');
-	h1.textContent = 'Rate the articles';
-	contentElement.appendChild(h1);
-	document.title = h1.textContent;
-
-	var p = document.createElement('p');
-	p.textContent = 'Please rate the articles you have just read in order of preference, with the highest rated article at the top and the lowest rated article at the bottom';
-	contentElement.appendChild(p);
+	createElement(contentElement,'p','Please rate the articles you have just read in order of preference, with the highest rated article at the top and the lowest rated article at the bottom.');
 
 	var ol = document.createElement('ol');
 	contentElement.appendChild(ol);
@@ -160,24 +89,86 @@ function loadRater(articleArray){
 		var span = document.createElement('span');
 		span.className = 'pull-right';
 		li.appendChild(span);
-		var buttonUp = document.createElement('button');
-		buttonUp.textContent = 'Up';
-		buttonUp.className = 'rateUp';
-		span.appendChild(buttonUp);
-		var buttonDown = document.createElement('button');
-		buttonDown.textContent = 'Down';
-		buttonDown.className = 'rateDown';
-		span.appendChild(buttonDown);
+		createElement(span,'button','Up',void 0,'rateUp');
+		createElement(span,'button','Down',void 0,'rateDown');
 	}
 	$('ol li:lt(1) button.rateUp').prop('disabled',true);
 	$('ol li:gt(3) button.rateDown').prop('disabled',true);
-	var buttons = document.createElement('div');
-	buttons.className = 'nav-buttons';
-	contentElement.appendChild(buttons);
-	var subButton = document.createElement('button');
-	subButton.textContent = 'Submit Ratings';
-	subButton.id = 'submit';
-	buttons.appendChild(subButton);
+	$('.rateUp').bind('click',function(){
+		var current = $(this).closest('li')
+		var previous = current.prev('li');
+		if(previous.length !== 0){
+			current.insertBefore(previous);
+		}
+		$('ol li:lt(1) button.rateUp').prop('disabled',true);
+		$('ol li:gt(0) button.rateUp').prop('disabled',false);
+		$('ol li:gt(3) button.rateDown').prop('disabled',true);
+		$('ol li:lt(4) button.rateDown').prop('disabled',false);
+	});
+	$('.rateDown').bind('click',function(){
+		var current = $(this).closest('li')
+		var next = current.next('li');
+		if(next.length !== 0){
+			current.insertAfter(next);
+		}
+		$('ol li:lt(1) button.rateUp').prop('disabled',true);
+		$('ol li:gt(0) button.rateUp').prop('disabled',false);
+		$('ol li:gt(3) button.rateDown').prop('disabled',true);
+		$('ol li:lt(4) button.rateDown').prop('disabled',false);
+	});
+	var buttons = createElement(contentElement,'div','',void 0,'nav-buttons');
+	createElement(buttons,'button','Submit Ratings','submit');
+
+	$('#submit').bind('click',function(){
+		var data = {};
+		for(i = 0; i < 5; i++){
+			// This sends the data in the format { articleID: rating }
+			data[$('ol li')[i].id] = i+1;
+		}
+		$.ajax({
+			type: 'POST',
+			url: 'api/rating/post.php',
+			dataType: 'json',
+			ContentType: 'application/json',
+			data: {'data': JSON.stringify(data)},
+			success: function( message ){
+				clearPage(document.querySelector('.content'));
+				loadSuccess(contentElement);
+			},
+			error: function( message ){
+				alert('There was an error submitting, please try again');
+			}
+		});
+	});
+}
+
+function loadSuccess(contentElement){
+	createElement(contentElement,'h1','Rating submission successful');
+	document.title = 'Rating submission successful';
+
+	createElement(contentElement,'p','Thank you, your article ratings have been submitted.');
+
+	var buttons = createElement(contentElement,'div','',void 0,'nav-buttons');
+	createElement(buttons,'button','Start Again','start');
+
+	$('#start').bind('click',function(){
+		window.location.href = 'http://localhost:8000/';
+	});
+}
+
+function createElement(parentElement,elementType,textContent,id,className,){
+	var newElement = document.createElement(elementType);
+	if(textContent){
+		newElement.textContent = textContent;
+	}
+	if(id){
+		newElement.id = id;
+	}
+	if(className){
+		newElement.className = className;
+	}
+	parentElement.appendChild(newElement);
+	return newElement;
 }
 
 function clearPage(contentElement){
