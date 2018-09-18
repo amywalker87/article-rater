@@ -1,4 +1,4 @@
-var articleArray = [1,2,3,4,5];
+var articleArray = [1, 2, 3, 4, 5];
 var articleTitles = [];
 var currentArticle = 0;
 var elements = {heading: 'h2', paragraph: 'p', image: 'img', list: 'ul', ordered: 'ol'};
@@ -7,134 +7,110 @@ articleArray.sort(function(){return 0.5 - Math.random()});
 
 $(document).ready(function(){
 	var contentElement = document.querySelector('.content');
-	loadArticle(contentElement,articleArray[currentArticle - 1], articleArray[currentArticle], articleArray[currentArticle + 1]);
+	loadArticle(contentElement, articleArray[currentArticle - 1], articleArray[currentArticle], articleArray[currentArticle + 1]);
 });
 
-function loadArticle(contentElement,previous, current, next){
+function loadArticle(contentElement, previous, current, next){
 	$.getJSON('api/article/get.php?id='+current, function(article){
 		article = JSON.parse(article.message);
-
-		createElement(contentElement,'h1',article.title);
+		createElement(contentElement, 'h1', article.title);
 		document.title = article.title;
 		articleTitles[current] = article.title;
-
-		var bodyDiv = createElement(contentElement,'div','',void 0,'article-body');
+		var bodyDiv = createElement(contentElement, 'div', '', void 0, 'article-body');
 
 		for(var element in article.body){
 			var elementType = elements[article.body[element].type];
-			var newElement = document.createElement(elementType);
 			if(elementType == 'img'){
-				newElement.src = article.body[element].model.url;
-				newElement.alt = article.body[element].model.altText;
-				newElement.height = article.body[element].model.height;
-				newElement.width = article.body[element].model.width;
+				createElement(bodyDiv, elementType, void 0, void 0, void 0, article.body[element].model.url, article.body[element].model.altText, article.body[element].model.height, article.body[element].model.width);
 			}
 			else if(elementType == 'ul'){
 				if(article.body[element].model.type == 'ordered'){
 					elementType = elements[article.body[element].model.type];
-					newElement = document.createElement(elementType);
 				}
+				var listElement = createElement(bodyDiv, elementType, '');
 				for(var list in article.body[element].model.items){
-					var listItem = document.createElement('li');
-					listItem.textContent = article.body[element].model.items[list];
-					newElement.appendChild(listItem);
+					createElement(listElement, 'li', article.body[element].model.items[list]);
 				}
 			}
 			else{
-				newElement.textContent = article.body[element].model.text;
+				createElement(bodyDiv, elementType, article.body[element].model.text);
 			}
-			bodyDiv.appendChild(newElement);
 		}
-		var buttons = createElement(contentElement,'div','',void 0,'nav-buttons');
+		var buttons = createElement(contentElement, 'div', '', void 0, 'nav-buttons');
 		if(previous){
-			createElement(buttons,'button','Previous Article','previous');
-			$('#previous').bind('click',function(){
+			createElement(buttons, 'button', 'Previous Article', 'previous');
+			$('#previous').bind('click', function(){
 				currentArticle--;
 				clearPage(contentElement);
-				loadArticle(contentElement,articleArray[currentArticle - 1], articleArray[currentArticle], articleArray[currentArticle + 1]);
+				loadArticle(contentElement, articleArray[currentArticle - 1], articleArray[currentArticle], articleArray[currentArticle + 1]);
 			});
 		}
 		if(next){
-			createElement(buttons,'button','Next Article','next');
-			$('#next').bind('click',function(){
+			createElement(buttons, 'button', 'Next Article', 'next');
+			$('#next').bind('click', function(){
 				currentArticle++;
 				clearPage(contentElement);
-				loadArticle(contentElement,articleArray[currentArticle - 1], articleArray[currentArticle], articleArray[currentArticle + 1]);
+				loadArticle(contentElement, articleArray[currentArticle - 1], articleArray[currentArticle], articleArray[currentArticle + 1]);
 			});
 		}
 		else{
-			createElement(buttons,'button','Rate Articles','rate');
-			$('#rate').bind('click',function(){
+			createElement(buttons, 'button', 'Rate Articles', 'rate');
+			$('#rate').bind('click', function(){
 				clearPage(contentElement);
-				loadRater(contentElement,articleArray);
+				loadRater(contentElement, articleArray);
 			});
 		}
 	});
 }
 
-function loadRater(contentElement,articleArray){
-	createElement(contentElement,'h1','Rate the articles');
+function loadRater(contentElement, articleArray){
+	createElement(contentElement, 'h1', 'Rate the articles');
 	document.title = 'Rate the articles';
+	createElement(contentElement, 'p', 'Please rate the articles you have just read in order of preference, with the highest rated article at the top and the lowest rated article at the bottom.');
+	var ol = createElement(contentElement, 'ol');
 
-	createElement(contentElement,'p','Please rate the articles you have just read in order of preference, with the highest rated article at the top and the lowest rated article at the bottom.');
-
-	var ol = document.createElement('ol');
-	contentElement.appendChild(ol);
 	for(var article in articleArray){
-		var li = document.createElement('li');
-		li.textContent = articleTitles[articleArray[article]];
-		li.className = 'articleRateBox';
-		li.id = articleArray[article];
-		ol.appendChild(li);
-		var span = document.createElement('span');
-		span.className = 'pull-right';
-		li.appendChild(span);
-		createElement(span,'button','Up',void 0,'rateUp');
-		createElement(span,'button','Down',void 0,'rateDown');
+		var li = createElement(ol, 'li', articleTitles[articleArray[article]], articleArray[article], 'articleRateBox');
+		var span = createElement(li, 'span', void 0, void 0, 'pull-right');
+		createElement(span, 'button', 'Up', void 0, 'rateUp');
+		createElement(span, 'button', 'Down', void 0, 'rateDown');
 	}
-	$('ol li:lt(1) button.rateUp').prop('disabled',true);
-	$('ol li:gt(3) button.rateDown').prop('disabled',true);
-	$('.rateUp').bind('click',function(){
+	disableArrowButtons();
+	$('.rateUp').bind('click', function(){
 		var current = $(this).closest('li')
 		var previous = current.prev('li');
 		if(previous.length !== 0){
 			current.insertBefore(previous);
 		}
-		$('ol li:lt(1) button.rateUp').prop('disabled',true);
-		$('ol li:gt(0) button.rateUp').prop('disabled',false);
-		$('ol li:gt(3) button.rateDown').prop('disabled',true);
-		$('ol li:lt(4) button.rateDown').prop('disabled',false);
+		disableArrowButtons();
 	});
-	$('.rateDown').bind('click',function(){
+	$('.rateDown').bind('click', function(){
 		var current = $(this).closest('li')
 		var next = current.next('li');
 		if(next.length !== 0){
 			current.insertAfter(next);
 		}
-		$('ol li:lt(1) button.rateUp').prop('disabled',true);
-		$('ol li:gt(0) button.rateUp').prop('disabled',false);
-		$('ol li:gt(3) button.rateDown').prop('disabled',true);
-		$('ol li:lt(4) button.rateDown').prop('disabled',false);
+		disableArrowButtons();
 	});
-	var buttons = createElement(contentElement,'div','',void 0,'nav-buttons');
-	createElement(buttons,'button','Submit Ratings','submit');
+	var buttons = createElement(contentElement, 'div', '', void 0, 'nav-buttons');
+	createElement(buttons, 'button', 'Submit Ratings', 'submit');
 
-	$('#submit').bind('click',function(){
+	$('#submit').bind('click', function(){
 		var data = {};
 		for(i = 0; i < 5; i++){
 			// This sends the data in the format { articleID: rating }
 			data[$('ol li')[i].id] = i+1;
 		}
 		$.ajax({
-			type: 'POST',
-			url: 'api/rating/post.php',
-			dataType: 'json',
-			ContentType: 'application/json',
-			data: {'data': JSON.stringify(data)},
+			type: 'POST', 
+			url: 'api/rating/post.php', 
+			dataType: 'json', 
+			ContentType: 'application/json', 
+			data: {'data': JSON.stringify(data)}, 
 			success: function( message ){
 				clearPage(document.querySelector('.content'));
 				loadSuccess(contentElement);
-			},
+			}, 
 			error: function( message ){
 				alert('There was an error submitting, please try again');
 			}
@@ -143,20 +119,17 @@ function loadRater(contentElement,articleArray){
 }
 
 function loadSuccess(contentElement){
-	createElement(contentElement,'h1','Rating submission successful');
+	createElement(contentElement, 'h1', 'Rating submission successful');
 	document.title = 'Rating submission successful';
-
-	createElement(contentElement,'p','Thank you, your article ratings have been submitted.');
-
-	var buttons = createElement(contentElement,'div','',void 0,'nav-buttons');
-	createElement(buttons,'button','Start Again','start');
-
-	$('#start').bind('click',function(){
+	createElement(contentElement, 'p', 'Thank you, your article ratings have been submitted.');
+	var buttons = createElement(contentElement, 'div', '', void 0, 'nav-buttons');
+	createElement(buttons, 'button', 'Start Again', 'start');
+	$('#start').bind('click', function(){
 		window.location.href = 'http://localhost:8000/';
 	});
 }
 
-function createElement(parentElement,elementType,textContent,id,className,){
+function createElement(parentElement, elementType, textContent, id, className, src, alt, height, width){
 	var newElement = document.createElement(elementType);
 	if(textContent){
 		newElement.textContent = textContent;
@@ -167,6 +140,18 @@ function createElement(parentElement,elementType,textContent,id,className,){
 	if(className){
 		newElement.className = className;
 	}
+	if(src){
+		newElement.src = src;
+	}
+	if(alt){
+		newElement.alt = alt;
+	}
+	if(height){
+		newElement.height = height;
+	}
+	if(width){
+		newElement.width = width;
+	}
 	parentElement.appendChild(newElement);
 	return newElement;
 }
@@ -175,4 +160,11 @@ function clearPage(contentElement){
 	while(contentElement.firstChild){
 		contentElement.removeChild(contentElement.firstChild);
 	}
+}
+
+function disableArrowButtons(){
+	$('ol li:gt(0) button.rateUp').prop('disabled', false);
+	$('ol li:lt(4) button.rateDown').prop('disabled', false);
+	$('ol li:lt(1) button.rateUp').prop('disabled', true);
+	$('ol li:gt(3) button.rateDown').prop('disabled', true);
 }
