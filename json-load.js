@@ -26,7 +26,7 @@ function loadArticle(contentElement, previous, current, next){
 			for(var element in article.body){
 				var elementType = elements[article.body[element].type];
 				if(elementType == 'img'){
-					createElement(bodyDiv, elementType, void 0, void 0, void 0, article.body[element].model.url, article.body[element].model.altText, article.body[element].model.height, article.body[element].model.width);
+					createElement(bodyDiv, elementType, void 0, void 0, void 0, article.body[element].model.url, article.body[element].model.altText);
 				}
 				else if(elementType == 'ul'){
 					if(article.body[element].model.type == 'ordered'){
@@ -77,13 +77,16 @@ function loadRater(contentElement, articleArray){
 	createElement(contentElement, 'h1', 'Rate the articles');
 	document.title = 'Rate the articles';
 	createElement(contentElement, 'p', 'Please rate the articles you have just read in order of preference, with the highest rated article at the top and the lowest rated article at the bottom.');
-	var ol = createElement(contentElement, 'ol');
+	var ol = createElement(contentElement, 'ol', void 0, void 0, 'ratings');
 
 	for(var article in articleArray){
-		var li = createElement(ol, 'li', articleTitles[articleArray[article]], articleArray[article], 'articleRateBox');
-		var span = createElement(li, 'span', void 0, void 0, 'pull-right');
-		createElement(span, 'button', 'Up', void 0, 'rateUp');
-		createElement(span, 'button', 'Down', void 0, 'rateDown');
+		var li = createElement(ol, 'li', void 0, articleArray[article], 'articleRateBox');
+		var span1 = createElement(li, 'span', articleTitles[articleArray[article]], void 0, 'pull-left');
+		var span2 = createElement(li, 'span', void 0, void 0, 'pull-right');
+		var upButton = createElement(span2, 'button', 'Up', void 0, 'rateUp');
+		upButton.setAttribute('aria-label','Move up article '+articleTitles[articleArray[article]]);
+		var downButton = createElement(span2, 'button', 'Down', void 0, 'rateDown');
+		downButton.setAttribute('aria-label','Move down article '+articleTitles[articleArray[article]]);
 	}
 	disableArrowButtons();
 	$('.rateUp').bind('click', function(){
@@ -139,7 +142,7 @@ function loadSuccess(contentElement){
 	});
 }
 
-function createElement(parentElement, elementType, textContent, id, className, src, alt, height, width){
+function createElement(parentElement, elementType, textContent, id, className, src, alt){
 	var newElement = document.createElement(elementType);
 	if(textContent){
 		newElement.textContent = textContent;
@@ -155,12 +158,6 @@ function createElement(parentElement, elementType, textContent, id, className, s
 	}
 	if(alt){
 		newElement.alt = alt;
-	}
-	if(height){
-		newElement.height = height;
-	}
-	if(width){
-		newElement.width = width;
 	}
 	parentElement.appendChild(newElement);
 	return newElement;

@@ -7,14 +7,20 @@ html {
 }
 
 @media (max-width: 1000px) {
-  html { font-size: 15px; }
+	html {
+		font-size: 15px;
+	}
 }
 
 @media (max-width: 800px) {
-  html { font-size: 14px; }
+	html {
+		font-size: 14px;
+	}
 }
 @media (max-width: 400px) {
-  html { font-size: 12px; }
+	html {
+		font-size: 12px;
+	}
 }
 
 body {
@@ -49,6 +55,9 @@ p {
 }
 
 img {
+	max-width: 100%;
+	max-height: 420px;
+  	height: auto;
 	margin-right: auto;
 	margin-left: auto;
 	padding: .5rem;
@@ -154,13 +163,23 @@ button:disabled:hover {
 	transition-duration: 0.4s;
 }
 
+.ratings {
+	width: 100%;
+}
+
 .articleRateBox {
 	font-size: 1.4rem;
 	margin: 2rem 0;
+	width: 100%;
 }
 
 .pull-right {
 	float: right;
 	margin-top: -1rem;
 	width: 10rem;
+}
+@media (max-width: 1000px) {
+	.pull-left {
+		width: 60%;
+	}
 }
