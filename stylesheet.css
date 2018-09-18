@@ -124,7 +124,7 @@ button:disabled:hover {
 
 .nav-buttons button {
 	background-color: #17a2b8;
-	width: 9.25rem;
+	width: 9.4rem;
 	display: inline-block;
 }
 
@@ -176,10 +176,5 @@ button:disabled:hover {
 .pull-right {
 	float: right;
 	margin-top: -1rem;
-	width: 10rem;
-}
-@media (max-width: 1000px) {
-	.pull-left {
-		width: 60%;
-	}
+	width: 10.6rem;
 }

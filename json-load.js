@@ -76,7 +76,7 @@ function loadArticle(contentElement, previous, current, next){
 function loadRater(contentElement, articleArray){
 	createElement(contentElement, 'h1', 'Rate the articles');
 	document.title = 'Rate the articles';
-	createElement(contentElement, 'p', 'Please rate the articles you have just read in order of preference, with the highest rated article at the top and the lowest rated article at the bottom.');
+	createElement(contentElement, 'h2', 'Please rate the articles you have just read in order of preference, with the highest rated article at the top and the lowest rated article at the bottom.');
 	var ol = createElement(contentElement, 'ol', void 0, void 0, 'ratings');
 
 	for(var article in articleArray){
@@ -134,7 +134,7 @@ function loadRater(contentElement, articleArray){
 function loadSuccess(contentElement){
 	createElement(contentElement, 'h1', 'Rating submission successful');
 	document.title = 'Rating submission successful';
-	createElement(contentElement, 'p', 'Thank you, your article ratings have been submitted.');
+	createElement(contentElement, 'h2', 'Thank you, your article ratings have been submitted.');
 	var buttons = createElement(contentElement, 'div', '', void 0, 'nav-buttons');
 	var start = createElement(buttons, 'button', 'Start Again', 'start');
 	$(start).bind('click', function(){
@@ -179,7 +179,7 @@ function disableArrowButtons(){
 function errorPage(contentElement){
 	createElement(contentElement, 'h1', 'Error');
 	document.title = 'Error';
-	createElement(contentElement, 'p', 'Sorry, there was an error while trying to load your content. Please try again.');
+	createElement(contentElement, 'h2', 'Sorry, there was an error while trying to load your content. Please try again.');
 	var buttons = createElement(contentElement, 'div', '', void 0, 'nav-buttons');
 	var start = createElement(buttons, 'button', 'Start Again', 'start');
 	$(start).bind('click', function(){
